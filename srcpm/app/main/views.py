@@ -279,7 +279,20 @@ def index(start_date=0, end_date=0):
     for i in list_count_vul_type:
         data_vul_type[i[1]] = int(i[0])
     data_vul_type = sorted(data_vul_type.iteritems(), key=lambda d:d[1], reverse = True)
-    
+
+    # ---------------按照时间做趋势图--------------------
+    query = db.session.query(db.func.count(VulReport.start_date), VulReport.start_date).filter(
+        VulReport.start_date >= startDate,
+        VulReport.start_date <= endDate,
+        VulReport.related_vul_type != u'输出文档',
+    ).group_by(VulReport.start_date)
+    list_count_related_asset = query.all()
+    everyday_vul = {}
+    for i in list_count_related_asset:
+        everyday_vul[str(i[1])] = int(i[0])
+        # print str(i[1])
+    everyday_vul = sorted(everyday_vul.iteritems(), key=lambda d: d[1], reverse=True)
+
     #-----------------漏洞状态统计------------------------
     query = db.session.query( db.func.count(VulReport.vul_status), VulReport.vul_status ).filter(
                                                     VulReport.start_date >= startDate,
@@ -413,6 +426,7 @@ def index(start_date=0, end_date=0):
                             data_department_vul = json.dumps(data_department_vul, encoding='utf-8', indent=4),
                             data_department_risk_vul = json.dumps(data_department_risk_vul, encoding='utf-8', indent=4),
                             data_department_residual_risk = json.dumps(data_department_residual_risk, encoding='utf-8', indent=4),
+                           everyday_vul=json.dumps(everyday_vul, encoding='utf-8', indent=4),
                         )
 
 

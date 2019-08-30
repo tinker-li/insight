@@ -15,7 +15,13 @@
 	<h1>仪表盘</h1>
 </div>
 
-
+    <div style="width:90%">
+        <h3>时间趋势</h3>
+        <div>
+            {% line_chart everyday_vul with style='width:200px height:20px;' %}
+        </div>
+    </div>
+    <legend></legend>
 
     <div style="width:90%">
     <h3>漏洞类型</h3>
